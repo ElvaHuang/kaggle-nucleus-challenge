@@ -1,12 +1,14 @@
 # local folders
-input/
+input/*
 misc/
+logs/*
+intermediate/*
 
 # jupyter
 .ipynb_checkpoints
 
 # pycharm
-.idea
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

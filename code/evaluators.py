@@ -1,7 +1,10 @@
 import numpy as np
 from keras import backend as K
+import tensorflow as tf
 
 from config import smooth
+
+# reference: https://www.kaggle.com/c/data-science-bowl-2018/discussion/51553
 
 
 def rle(mask_matrix):
@@ -24,12 +27,28 @@ def rle(mask_matrix):
     return run_lengths
 
 
-def dice_coef(y_true, y_pred, smooth=smooth):
+def iou_coef(y_true, y_pred, smooth=smooth):
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+    intersection = K.sum(K.abs(y_true_f * y_pred_f))
+    union = K.sum(y_true_f) + K.sum(y_pred_f) - intersection
+    return (intersection + smooth) / (union + smooth)
 
 
-def dice_coef_loss(y_true, y_pred):
-    return -dice_coef(y_true, y_pred)
+def iou_loss(y_true, y_pred, smooth=smooth):
+    return -iou_coef(y_true, y_pred)
+
+
+def mean_iou(y_true, y_pred, smooth=smooth):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(K.abs(y_true_f * y_pred_f))
+    union = K.sum(y_true_f) + K.sum(y_pred_f) - intersection
+    ious = (intersection + smooth) / (union + smooth)
+
+    metrics = []
+    for t in np. arange(0.5, 0.95, 0.05):
+        ious_ = tf.to_int32(ious > t)
+        metrics.append(K.sum(ious_)/tf.shape(ious_)[0])
+
+    return K.mean(metrics)
