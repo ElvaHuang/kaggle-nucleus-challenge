@@ -171,9 +171,3 @@ if __name__ == '__main__':
     # train_rle_labels_df = get_train_rle_labels(input_dir, stage='stage1')
     # train_rle_labels_df.to_json(os.path.join(intermediate_dir, 'train_rle_labels_df.json'))
     # # train_rle_labels_df.to_pickle(os.path.join(intermediate_dir, 'train_rle_labels_df.pkl'))
-
-
-
-
-
-np.ndarray
